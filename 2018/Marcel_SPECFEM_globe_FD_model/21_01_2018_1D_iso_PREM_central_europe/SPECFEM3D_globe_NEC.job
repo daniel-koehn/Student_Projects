@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -l elapstim_req=96:00:00  # Walltime
+#PBS -l cputim_job=3072:00:00  # akkumulierte CPU-Zeit pro Knoten
+#PBS -l memsz_job=100gb        # Hauptspeicherbedarf
+#PBS -b 5                      # Anzahl der Knoten
+#PBS -T intmpi                 # gibt Jobtyp an; intmpi fuer Intel-MPI 
+#PBS -l cpunum_job=32          # Anzahl benoetigter CPUs pro Knoten 
+#PBS -N SPECFEM                # Name des Batch-Jobs
+#PBS -o SPECFEM.out            # Datei fuer die Standardausgabe
+#PBS -j o                      # Standard- und Fehlerausgabe in eine Datei 
+#PBS -q cllong                 # Batch-Klasse
+
+# Initialisierung der Intel-Umgebung
+module load intel17.0.4 intelmpi17.0.4
+
+cd $PBS_O_WORKDIR
+#make clean
+#make meshfem3D
+#mpirun $NQSII_MPIOPTS -np 150 ./bin/xmeshfem3D > SPECFEM_3D_mesher.out
+#make clean
+#make specfem3D
+mpirun $NQSII_MPIOPTS -np 150 ./bin/xspecfem3D > SPECFEM_3D_run.out
+
+# Ausgabe der verbrauchten Ressourcen (Rechenzeit, Hauptspeicher) nach Jobende
+/usr/bin/nqsII/qstat -f ${PBS_JOBID/0:}
+
